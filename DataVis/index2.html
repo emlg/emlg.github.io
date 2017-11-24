@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html>
+<style>
+h1, p {
+  font-family: verdana, serif;
+  color : #AEB7B3
+}
+
+select {
+  border-color: #AEB7B3;
+  border-width: 2px;
+}
+
+option {
+  background-color : #1C2826;
+  font-family: verdana, serif;
+  font-size: 11px;
+  text-align: left;
+  color : #AEB7B3;
+}
+
+select option:checked {
+  background:#5A7D7C;
+  color : #FFC857;
+}
+
+option:hover {
+  color: #FFC857;
+  background: #5A7D7C;
+}
+.bar--positive {
+  fill: #5A7D7C;
+}
+
+.bar--negative {
+  fill: #FFC857;
+}
+
+.axis text {
+  font: 10px sans-serif;
+  stroke : #AEB7B3;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #AEB7B3;
+  shape-rendering: crispEdges;
+}
+
+#visualize {
+  display:flex;
+  flex-direction:row;
+  justify-content: space-around;
+}
+
+#list_crypto {
+  display:flex;
+  flex-direction:column;
+  width : 15%;
+}
+
+#graph{
+  display:flex;
+  flex-direction:column;
+  width: 85%;
+}
+
+</style>
+<head>
+  <title>Cryptodummies</title>
+  <script src="//d3js.org/d3.v3.min.js"></script>
+</head>
+<body bgcolor = "#1C2826" >
+<h1>Data Vis project</h1>
+<p>We will try to visualize in a new way the crypto currencies.</p>
+
+<div id="visualize">
+  <div id="list_crypto">
+    <select multiple size="4">
+      <option selected value="BTC">Bitcoin BTC</option>
+      <option value="ETH">Ethereum ETH</option>
+      <option value="RPL">Ripple RPL</option>
+      <option value="NEO">Neo NEO</option>
+    </select>
+  </div>
+  <div id="graph">
+
+  </div>
+</div>
+</body>
+
+<script>
+//Source graph : https://bl.ocks.org/mbostock/2368837#data.tsv
+//Source brush : https://bl.ocks.org/mbostock/34f08d5e11952a80609169b7917d4172
+var margin = {top: 20, right: 30, bottom: 40, left: 30},
+    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom,
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickSize(0)
+    .tickPadding(6);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var xAxis2 = d3.axisBottom(x2);
+
+var svg = d3.select("#graph").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("data.tsv", type, function(error, data) {
+  x.domain(data.map(function(d) { return d.name; }));
+  y.domain(d3.extent(data, function(d) { return d.value; })).nice();
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", function(d) { return "bar bar--" + (d.value < 0 ? "negative" : "positive"); })
+      .attr("y", function(d) { return y(Math.max(0, d.value)); })
+      .attr("x", function(d) { return x(d.name); })
+      .attr("height", function(d) { return Math.abs(y(d.value) - y(0)); })
+      .attr("width", x.rangeBand());
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0,"+ (height/2 + margin.top)+ ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(0,0)")
+      .call(yAxis);
+
+
+});
+
+function type(d) {
+  d.value = +d.value;
+  return d;
+}
+
+</script>
+</html>
