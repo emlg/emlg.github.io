@@ -1,191 +1,36 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
-h1, p {
-  font-family: verdana, serif;
-  color : #AEB7B3
-}
-
-select {
-  border-color: #AEB7B3;
-  border-width: 2px;
-}
-
-button {
-  background-color : #1C2826;
-  font-family: verdana, serif;
-  font-size: 11px;
-  text-align: left;
-  color : #AEB7B3;
-  border : 1px solid #AEB7B3;
-}
-
-button:hover{
-  color: #FFC857;
-  background: #5A7D7C;
-}
-.bar--positive {
-  fill: #5A7D7C;
-}
-
-.bar--negative {
-  fill: #FFC857;
-}
-
-.axis text {
-  font: 10px sans-serif;
-  stroke : #AEB7B3;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #AEB7B3;
-  shape-rendering: crispEdges;
-}
-
-#visualize {
-  display:flex;
-  flex-direction:row;
-  justify-content: space-around;
-}
-
-#list_crypto {
-  display:flex;
-  flex-direction:column;
-  width : 15%;
-}
-
-#graph{
-  display:flex;
-  flex-direction:column;
-  width: 85%;
-}
-
-.area {
-  fill: steelblue;
-  clip-path: url(#clip);
-}
-
-.zoom {
-  cursor: move;
-  pointer-events: all;
-}
-.selection {
-  fill:  #AEB7B3;
-  fill-opacity: 0.8;
-  stroke : none;
-}
-
-</style>
 <head>
   <title>Cryptodummies</title>
+  <link rel="stylesheet" href="main.css">
   <script src="//d3js.org/d3.v4.min.js"></script>
 </head>
+
 <body bgcolor = "#1C2826" >
-<h1>Data Vis project</h1>
-<p>We will try to visualize in a new way the crypto currencies.</p>
+  <h1>Data Vis project</h1>
+  <p>We will try to visualize in a new way the crypto currencies.</p>
 
-<div id="visualize">
-  <div id="list_crypto">
-    <button type="button" name="BTC" onclick="toggleBTC()">Bitcoin BTC</button>
-    <button type="button" name="ETH">Ethereum ETH</button>
-    <button type="button" name="NEO">Neo NEO</button>
+  <div id="visualize">
+    <div id="list_crypto">
+      <button type="button" name="BTC" onmouseover="highlight(this)" onmouseout="resetcolor()" >Bitcoin (BTC)</button>
+      <button type="button" name="ETH" onmouseover="highlight(this)" onmouseout="resetcolor()" >Ethereum (ETH)</button>
+      <button type="button" name="NEO" onmouseover="highlight(this)" onmouseout="resetcolor()" >Neo (NEO)</button>
+      <button type="button" name="XRP" onmouseover="highlight(this)" onmouseout="resetcolor()" >Ripple (XRP)</button>
+      <button type="button" name="BCH" onmouseover="highlight(this)" onmouseout="resetcolor()" >Bitcoin Cash (BCH)</button>
+      <button type="button" name="DASH" onmouseover="highlight(this)" onmouseout="resetcolor()" >Dash (DASH)</button>
+      <button type="button" name="BCC" onmouseover="highlight(this)" onmouseout="resetcolor()" >Bitconnect (BCC)</button>
+      <button type="button" name="ETC" onmouseover="highlight(this)" onmouseout="resetcolor()" >Ethereum Classic (ETC)</button>
+      <button type="button" name="MIOTA" onmouseover="highlight(this)" onmouseout="resetcolor()" >Iota (MIOTA)</button>
+      <button type="button" name="LTC" onmouseover="highlight(this)" onmouseout="resetcolor()" >Litecoin (LTC)</button>
+      <button type="button" name="XMR" onmouseover="highlight(this)" onmouseout="resetcolor()" >Monero (XMR)</button>
+      <button type="button" name="XEM" onmouseover="highlight(this)" onmouseout="resetcolor()" >Nem (XEM)</button>
+      <button type="button" name="NMR" onmouseover="highlight(this)" onmouseout="resetcolor()" >Numeraire (NMR)</button>
+      <button type="button" name="STRAT" onmouseover="highlight(this)" onmouseout="resetcolor()" >Stratis (STRAT)</button>
+      <button type="button" name="WAVES" onmouseover="highlight(this)" onmouseout="resetcolor()" >Waves (WAVES)</button>
+    </div>
+    <div id="graph">
+      <svg width="960" height="500"></svg>
+    </div>
   </div>
-  <div id="graph">
-    <svg width="960" height="500"></svg>
-  </div>
-</div>
-
-<script>
-
-function toggleBTC(){
-  var button = document.getElementById("BTC");
-  console.log("COUCOU");
-  button.color = "#FFC857";
-  button.background = "#5A7D7C";
-}
-
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 110, left: 40},
-    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    height2 = +svg.attr("height") - margin2.top - margin2.bottom;
-
-var parseDate = d3.timeParse("%b %Y");
-
-var x = d3.scaleBand().range([0, width]).padding(0.1),
-    x2 = d3.scaleTime().range([0, width]),
-    y = d3.scaleLinear().range([height, 0]);
-
-var xAxis = d3.axisBottom(x),
-    xAxis2 = d3.axisBottom(x2),
-    yAxis = d3.axisLeft(y).tickSize(0)
-    .tickPadding(6);
-
-var brush = d3.brushX()
-    .extent([[0, 0], [width, height2]])
-    .on("brush end", brushed);
-
-
-var focus = svg.append("g") //Focus is the svg for the graph
-    .attr("class", "focus")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var context = svg.append("g") //Context is the svg for the brush
-    .attr("class", "context")
-    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-
-d3.tsv("data.tsv", type, function(error, data) {
-  if (error) throw error;
-  //Give values to axis
-  x.domain(data.map(function(d) { return d.name; }));
-  //console.log(d3.extent(data, function(d) {return d.value; }));
-  y.domain(d3.extent(data, function(d) {return d.value; })).nice();
-  x2.domain([parseDate("Jan 2009"), parseDate("Nov 2017")]);
-
-  focus.selectAll(".bar") //Compute, place and draw every bar
-      .data(data)
-    .enter().append("rect")
-      .attr("class", function(d) { return "bar bar--" + (d.value < 0 ? "negative" : "positive"); })
-      .attr("y", function(d) { return y(Math.max(0, d.value)); })
-      .attr("x", function(d) { return x(d.name); })
-      .attr("height", function(d) { return Math.abs(y(d.value) - y(0)); })
-      .attr("width", x.bandwidth());
-
-  focus.append("g") //Append x axis of graph
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0,"+ (height/2 + margin.top-3 )+ ")")
-      .call(xAxis);
-
-  focus.append("g") //Append y axis of graph
-      .attr("class", "axis axis--y")
-      .call(yAxis);
-
-  context.append("g") //Axis for brush
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height2/2 + ")")
-      .call(xAxis2);
-
-  context.append("g") //Selecting area on brush
-      .attr("class", "brush")
-      .call(brush)
-      .call(brush.move, x.range());
-
-});
-
-function brushed() {
-  var s = d3.event.selection || x2.range();
-  var time_interval = s.map(x2.invert, x2);
-  //Display somewhere the exact time interval
-  //Compute new values for each currency and display new bars
-}
-
-function type(d) { //Function that parses the data on read
-  //d.name = parseDate(d.name);
-  d.value = +d.value;
-  return d;
-}
-
-</script>
+  <script type="text/javascript" src="crypto.js"></script>
+</body>
