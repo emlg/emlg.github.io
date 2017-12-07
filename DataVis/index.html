@@ -4,72 +4,51 @@
   <title>Cryptodummies</title>
   <link rel="stylesheet" href="main.css">
   <script src="//d3js.org/d3.v4.min.js"></script>
+  <style>
+  /* Style the tab */
+  div.tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #1C2826;
+  }
+  /* Style the buttons inside the tab */
+  div.tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+  }
+  /* Change background color of buttons on hover */
+  div.tab button:hover {
+      background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  div.tab button.active {
+      background-color: #ccc;
+  }
+  /* Style the tab content */
+  .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-top: none;
+  }
+</style>
 </head>
 
 <body bgcolor = "#1C2826" >
   <h1>Cryptocurrencies in a new way</h1>
   <p>Please select on the right the cryptocurrencies and then select the period on the time axis which is of your interest</p>
 
-  <div id="modes" style='height:50px'>
-    <button type="button" id="modeSwitch" onclick="switchMode(this)" >Go to Investment mode</button>
-    <form id="amount_input">
-      Beginning amount to invest : <input type="text" name="amount" value="Type your amount" />
-      <input type="submit" value="Go !" />
-    </form>
+  <div class = "tab">
+    <button class = "tablinks" onclick = "location.href='classicmode';">Classic Mode</button>
+    <button class = "tablinks" onclick = "location.href='investmode';">Invest Mode</button>
+    <button class = "tablinks" onclick = "parent.location='https://github.com/emlg/emlg.github.io/tree/master/DataVis'">Code</button>
+    <button class = "tablinks" onclick = "parent.location='https://github.com/emlg/emlg.github.io/blob/master/DataVis/process_book.pdf'">Process Book</button>
+    <button class = "tablinks" onclick = "parent.location='https://youtube.com'">Screencast</button>
   </div>
-
-  <div id="visualize">
-    <div id="list_crypto">
-      <button type="button" id="BTC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitcoin.png" height = "20" />
-        Bitcoin (BTC)</button>
-      <button type="button" id="ETH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/ethereum.png" height = "20" />
-        Ethereum (ETH)</button>
-      <button type="button" id="NEO" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/neo.png" height = "20" />
-        Neo (NEO)</button>
-      <button type="button" id="XRP" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/ripple.png" height = "20" />
-        Ripple (XRP)</button>
-      <button type="button" id="BCH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitcoin-cash.png" height = "20" />
-        Bitcoin Cash (BCH)</button>
-      <button type="button" id="DASH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/dash.png" height = "20" />
-        Dash (DASH)</button>
-      <button type="button" id="BCC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitconnect.png" height = "20" />
-        Bitconnect (BCC)</button>
-      <button type="button" id="ETC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/ethereum-classic.png" height = "20" />
-        Ethereum Classic (ETC)</button>
-      <button type="button" id="MIOTA" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/iota.png" height = "20" />
-        Iota (MIOTA)</button>
-      <button type="button" id="LTC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/litecoin.png" height = "20" />
-        Litecoin (LTC)</button>
-      <button type="button" id="XMR" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/monero.png" height = "20" />
-        Monero (XMR)</button>
-      <button type="button" id="XEM" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/nem.png" height = "20" />
-        Nem (XEM)</button>
-      <button type="button" id="NMR" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/numeraire.png" height = "20" />
-        Numeraire (NMR)</button>
-      <button type="button" id="STRAT" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/stratis.png" height = "20" />
-        Stratis (STRAT)</button>
-      <button type="button" id="WAVES" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/waves.png" height = "20" />
-        Waves (WAVES)</button>
-    </div>
-    <div id="graph">
-      <svg width="960" height="500"></svg>
-    </div>
-  </div>
-
-  <script type="text/javascript" src="crypto.js"></script>
+  <!--script type="text/javascript" src="crypto.js"></script-->
 </body>

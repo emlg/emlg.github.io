@@ -1,20 +1,3 @@
-let mode = 1;
-
-function switchMode(button){
-  let b = button.getAttribute("id");
-  if(mode == 2){
-    mode = 1;
-    d3.selectAll("#modeSwitch").text("Go to Investment Mode");
-    d3.select(".form").attr("visibility", "hidden");
-  }else if(mode == 1){
-    mode = 2;
-    d3.selectAll("#modeSwitch").text("Go to Basic Mode");
-    d3.select(".form").attr("visibility", "visible");
-  }
-  console.log("Changed mode");
-  brushed();
-}
-
 function clicked(button){
   let id = button.getAttribute("id");
   let index = selected_currencies.indexOf(id);
@@ -53,21 +36,6 @@ function getPercentage(oldPrice, newPrice){
     percentage = 100 * (newPrice - oldPrice) / oldPrice;
   }
   return percentage;
-}
-
-function getRangeMonths(date1, date2){
-  let datesList = [];
-  //Convert Dates to first day of their corresponding month
-  let currentDate = new Date(date1.getFullYear(), date1.getMonth(), 1);
-  let stopDate = new Date(date2.getFullYear(), date2.getMonth(), 1);
-  while(currentDate <= stopDate){
-    split_current = currentDate.toString().split(" ");
-    date_string = split_current[1] + " 01 " + split_current[3];
-    datesList.push(date_string);
-    // Go to next month (to change if we want to pick each week, day...)
-    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 1);
-  }
-  return datesList;
 }
 
 let initializing = true;
@@ -109,11 +77,8 @@ let currencies = [];
 let currenciesCount = 0;
 //List of selected currencies
 let selected_currencies = ["BTC"];
-//Dates to keep for mode 2
 let firstDate = "Apr 28 2017";
 let finalDate = "Nov 07 2017";
-let dates = [];
-
 
 let first_appearance = [];
 first_appearance[2013] = ["BTC", "XRP", "LTC"];
@@ -121,21 +86,6 @@ first_appearance[2014] = ["DASH", "XMR"];
 first_appearance[2015] = ["ETH", "XEM"];
 first_appearance[2016] = ["NEO", "BCC", "ETC"];
 first_appearance[2017] = ["BCH", "NMR", "MIOTA", "START", "WAVES"];
-/*first_appearance["BTC"] = "Apr 28 2013";
-first_appearance["ETH"] = "Aug 07 2015";
-first_appearance["NEO"] = "Sep 09 2016";
-first_appearance["XRP"] = "Aug 04 2013";
-first_appearance["BCH"] = "Jul 23 2017";
-first_appearance["DASH"] = "Feb 14 2014";
-first_appearance["BCC"] = "Jan 20 2016";
-first_appearance["ETC"] = "Jul 24 2016";
-first_appearance["MIOTA"] = "Jun 13 2017";
-first_appearance["LTC"] = "Apr 28 2013";
-first_appearance["XMR"] = "May 21 2014";
-first_appearance["XEM"] = "Apr 01 2015";
-first_appearance["NMR"] = "Jun 23 2017";
-first_appearance["STRAT"] = "Aug 12 2016";
-first_appearance["WAVES"] = "Jun 02 2016";*/
 
 //Function that fill the day_prices object with the csv data
 function fillPrices(data){
@@ -157,7 +107,7 @@ function fillCurrencies(row){
   currenciesCount = currencies.length;
 }
 
-d3.csv("crypto_prices.csv", function(error, data) {
+d3.csv("../crypto_prices.csv", function(error, data) {
   if (error) throw error;
   fillPrices(data);
   fillCurrencies(data[0]);
@@ -170,7 +120,7 @@ x2.domain([parseDate("Apr 28 2013"), parseDate("Nov 07 2017")]);
 
 function cleanGraph(y_0, dates){
   //Set all histogram bars to 0
-  //if(mode == 1){
+
     for (let i = 0; i < currencies.length; i++){
       focus.selectAll("#"+ currencies[i])
            .transition()
@@ -178,15 +128,7 @@ function cleanGraph(y_0, dates){
            .attr("y", y_0)
            .attr("height", 0).remove();
     }
-  //} else if(mode ==2){
-    for (let i = 0; i < dates.length; i++){
-      focus.selectAll("#"+ dates[i].split(" ")[0])
-           .transition()
-           .duration(500)
-           .attr("y", y_0)
-           .attr("height", 0).remove();
-    }
-  //}
+
 
   //Change position of axis
   focus.selectAll("#xaxis")
@@ -200,7 +142,6 @@ function cleanGraph(y_0, dates){
 
 //Function that updates the graph when brushing
 function updateGraph(beginDate, endDate){
-  if(mode == 1){
     let percentages = [];
     let oldPrice = day_prices[beginDate];
     let newPrice = day_prices[endDate];
@@ -252,77 +193,7 @@ function updateGraph(beginDate, endDate){
             .attr("class", "axis axis--y")
             .call(yAxis);
 
-  } else if(mode ==2){
 
-
-    let initial_value = 100; //dollars
-    let amount_per_month = [];
-    let best_crypto_month = [];
-
-    //Compute all dates
-    let bDate = parseDate(beginDate);
-    let eDate = parseDate(endDate);
-    dates = getRangeMonths(bDate, eDate);
-
-    for(let i = 1; i < dates.length; i++) {
-      let amount_per_crypto = []
-      let begPrice = day_prices[dates[i - 1]];
-      let endPrice = day_prices[dates[i]];
-
-      for(let j = 0; j < currenciesCount; j++){
-        let amount = initial_value + getPercentage(begPrice[j], endPrice[j]) * initial_value;
-        amount_per_crypto.push(amount);
-      }
-      //Get max and the corresponding currency
-      max_value = d3.max(amount_per_crypto);
-      //console.log(amount_per_crypto);
-      index_crypto = amount_per_crypto.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-      amount_per_month.push(max_value);
-      best_crypto_month.push(currencies[index_crypto]);
-    }
-
-    console.log(amount_per_month);
-    let maxAmount = d3.max(amount_per_month);
-
-    x.domain(dates);
-    y.domain([0, maxAmount]);
-    cleanGraph(y(0), dates);
-
-    //Compute, place and draw every bar
-     focus.selectAll(".bar")
-          .data(amount_per_month)
-          .enter().append("rect")
-          .attr("id", function(d, i) { return dates[i].split(" ")[0]; })
-          .attr("class", "bar bar--positive")
-          .attr("x", function(d, i) { return (x(dates[i]) + x(dates[i + 1])) / 2; })
-          .attr("width", x.bandwidth());
-
-    for (let i = 0; i < dates.length; i++){
-      focus.select("#"+ dates[i].split(" ")[0])
-           .attr("class", "bar bar--positive")
-           .transition()
-           .delay(500)
-           .duration(500)
-           .attr("y", function(d) { return y(amount_per_month[i]); })
-           .attr("height", function(d) { return Math.abs(y(amount_per_month[i]) - y(0)); });
-    }
-
-    focus.append("g")//Append x axis of graph
-            .attr("id", "xaxis")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0,"+ y(0) + ")") //height/2 + margin.top
-            .attr("visibility", "hidden")
-            .call(xAxis)
-            .transition()
-            .delay(500)
-            .attr("visibility", "visible");
-
-    yAxis = yAxis.tickFormat(d => d + "$");
-    focus.append("g") //Append y axis of graph
-            .attr("id", "yaxis")
-            .attr("class", "axis axis--y")
-            .call(yAxis);
-  }
 }
 
 context.append("g") //Axis for brush

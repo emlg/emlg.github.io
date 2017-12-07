@@ -1,0 +1,69 @@
+h1, p{
+  font-family: verdana, serif;
+  color : #AEB7B3;
+}
+
+select {
+  border-color: #AEB7B3;
+  border-width: 2px;
+}
+
+button{
+  background-color : #1C2826;
+  font-family: verdana, serif;
+  font-size: 11px;
+  height: 30px;
+  text-align: left;
+  color : #AEB7B3;
+  border : 1px solid #AEB7B3;
+}
+
+button:hover, #BTC, input {
+  color: #5B281C;
+  background: #AEB7B3;
+}
+
+.bar--positive {
+  fill: #5C7457;
+}
+
+.axis text {
+  font: 10px sans-serif;
+  stroke : #AEB7B3;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #AEB7B3;
+  shape-rendering: crispEdges;
+}
+
+
+#graph{
+  display:flex;
+  flex-direction:column;
+  width: 85%;
+}
+
+.area {
+  fill: steelblue;
+  clip-path: url(#clip);
+}
+
+.zoom {
+  cursor: move;
+  pointer-events: all;
+}
+
+.selection {
+  fill:  #AEB7B3;
+  fill-opacity: 0.8;
+  stroke : none;
+}
+
+#timeinterval, #newcrypto{
+  font-family: verdana, serif;
+  fill : #AEB7B3;
+  font-size: 10px;
+}
