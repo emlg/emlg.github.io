@@ -8,14 +8,6 @@ select {
   border-width: 2px;
 }
 
-form {
-  font-family: verdana, serif;
-  color : #AEB7B3;
-  font-size: 11px;
-  display: inline;
-  padding-left: 50px;
-}
-
 button{
   background-color : #1C2826;
   font-family: verdana, serif;

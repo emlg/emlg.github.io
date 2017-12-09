@@ -3,94 +3,40 @@ h1, p{
   color : #AEB7B3;
 }
 
-select {
-  border-color: #AEB7B3;
-  border-width: 2px;
+/* Style the tab */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #1C2826;
 }
-
-form {
-  font-family: verdana, serif;
-  color : #AEB7B3;
-  font-size: 11px;
-  display: inline;
-  padding-left: 50px;
+/* Style the buttons inside the tab */
+div.tab button {
+    background-color: #1C2826;
+    float: left;
+    font-family: verdana, serif;
+    font-size: 11px;
+    height: 30px;
+    text-align: left;
+    color : #AEB7B3;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
 }
-
-button{
-  background-color : #1C2826;
-  font-family: verdana, serif;
-  font-size: 11px;
-  height: 30px;
-  text-align: left;
-  color : #AEB7B3;
-  border : 1px solid #AEB7B3;
-}
-
-button:hover, #BTC, input {
+/* Change background color of buttons on hover */
+div.tab button:hover {
   color: #5B281C;
   background: #AEB7B3;
 }
-
-.bar--positive {
-  fill: #5C7457;
+/* Create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
 }
-
-.bar--negative {
-  fill: #935A4D;
-}
-
-.bar--notfocus{
-  fill: #444134;
-}
-
-.axis text {
-  font: 10px sans-serif;
-  stroke : #AEB7B3;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #AEB7B3;
-  shape-rendering: crispEdges;
-}
-
-#visualize {
-  display:flex;
-  flex-direction:row;
-  justify-content: space-around;
-}
-
-#list_crypto {
-  display:flex;
-  flex-direction:column;
-  width : 15%;
-}
-
-#graph{
-  display:flex;
-  flex-direction:column;
-  width: 85%;
-}
-
-.area {
-  fill: steelblue;
-  clip-path: url(#clip);
-}
-
-.zoom {
-  cursor: move;
-  pointer-events: all;
-}
-
-.selection {
-  fill:  #AEB7B3;
-  fill-opacity: 0.8;
-  stroke : none;
-}
-
-#timeinterval, #newcrypto{
-  font-family: verdana, serif;
-  fill : #AEB7B3;
-  font-size: 10px;
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
 }
