@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
+  <link rel="icon" type="image/png" href="//static.epfl.ch/v0.26.1/favicon.png" />
   <title>Cryptodummies</title>
   <link rel="stylesheet" href="main.css">
   <script src="//d3js.org/d3.v4.min.js"></script>
@@ -8,55 +9,56 @@
 
 <body bgcolor = "#1C2826" >
   <h1>Cryptocurrencies in a new way</h1>
-  <p>Please select on the right the cryptocurrencies and then select the period on the time axis which is of your interest</p>
-
+  <p>First, please select the cryptocurrencies you would like to compare on the right.
+    Second, please select the period which interests you on the time axis below the graph.
+    We give the precise time interval below the time axis and the cryptocurrencies that were created during or after the beginning of your time interval.</p>
 
   <div id="visualize">
     <div id="list_crypto">
       <button type="button" id="BTC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitcoin.png" height = "20" />
+        <img src="../logos/bitcoin.png" height = "20" />
         Bitcoin (BTC)</button>
       <button type="button" id="ETH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
         <img src="logos/ethereum.png" height = "20" />
         Ethereum (ETH)</button>
       <button type="button" id="NEO" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/neo.png" height = "20" />
+        <img src="../logos/neo.png" height = "20" />
         Neo (NEO)</button>
       <button type="button" id="XRP" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/ripple.png" height = "20" />
+        <img src="../logos/ripple.png" height = "20" />
         Ripple (XRP)</button>
       <button type="button" id="BCH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitcoin-cash.png" height = "20" />
+        <img src="../logos/bitcoin-cash.png" height = "20" />
         Bitcoin Cash (BCH)</button>
       <button type="button" id="DASH" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/dash.png" height = "20" />
+        <img src="../logos/dash.png" height = "20" />
         Dash (DASH)</button>
       <button type="button" id="BCC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/bitconnect.png" height = "20" />
+        <img src="../logos/bitconnect.png" height = "20" />
         Bitconnect (BCC)</button>
       <button type="button" id="ETC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/ethereum-classic.png" height = "20" />
+        <img src="../logos/ethereum-classic.png" height = "20" />
         Ethereum Classic (ETC)</button>
       <button type="button" id="MIOTA" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/iota.png" height = "20" />
+        <img src="../logos/iota.png" height = "20" />
         Iota (MIOTA)</button>
       <button type="button" id="LTC" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/litecoin.png" height = "20" />
+        <img src="../logos/litecoin.png" height = "20" />
         Litecoin (LTC)</button>
       <button type="button" id="XMR" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/monero.png" height = "20" />
+        <img src="../logos/monero.png" height = "20" />
         Monero (XMR)</button>
       <button type="button" id="XEM" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/nem.png" height = "20" />
+        <img src="../logos/nem.png" height = "20" />
         Nem (XEM)</button>
       <button type="button" id="NMR" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/numeraire.png" height = "20" />
+        <img src="../logos/numeraire.png" height = "20" />
         Numeraire (NMR)</button>
       <button type="button" id="STRAT" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/stratis.png" height = "20" />
+        <img src="../logos/stratis.png" height = "20" />
         Stratis (STRAT)</button>
       <button type="button" id="WAVES" onclick= "clicked(this)" onmouseover="highlight(this)" onmouseout="resetcolor()" >
-        <img src="logos/waves.png" height = "20" />
+        <img src="../logos/waves.png" height = "20" />
         Waves (WAVES)</button>
     </div>
     <div id="graph">

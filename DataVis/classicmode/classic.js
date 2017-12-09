@@ -211,7 +211,7 @@ context.append("g") //Selecting area on brush
 context.append("text")
     .attr("id", "timeinterval")
     .attr("transform", "translate(0," + height2+ ")")
-    .text("Time interval" + firstDate + " to " + finalDate);
+    .text("Time interval " + firstDate + " to " + finalDate);
 
 context.append("text")
     .attr("id", "newcrypto")

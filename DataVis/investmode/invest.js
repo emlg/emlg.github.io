@@ -1,3 +1,10 @@
+let investamount = 100; //dollars
+
+function changeinvestamount(){
+  investamount = +d3.select("#investamount").property("value");
+  brushed();
+}
+
 function getPercentage(oldPrice, newPrice){
   let percentage = 0
   //If 0, means the money didn't exist so we consider there is no augmentation
@@ -86,7 +93,6 @@ function fillCurrencies(row){
     if (row.hasOwnProperty(prop)) {
       if (prop != 'Date') {
         currencies.push(prop);
-        //selected_currencies.push(prop);
       }
     }
   };
@@ -104,16 +110,16 @@ d3.csv("../crypto_prices.csv", function(error, data) {
 //Dates of beginning and end of csv file
 x2.domain([parseDate("Apr 28 2013"), parseDate("Nov 07 2017")]);
 
-function cleanGraph(y_0, dates){
+function cleanGraph(y_0, old_dates){
   //Set all histogram bars to 0
-
-    for (let i = 0; i < dates.length; i++){
-      focus.selectAll("#"+ dates[i].split(" ")[0])
+  for (let i = 0; i < old_dates.length -1 ; i++){
+    d3.select("#crypto--"+i).remove();
+    focus.selectAll("#bar--"+i)
            .transition()
            .duration(500)
            .attr("y", y_0)
            .attr("height", 0).remove();
-    }
+  }
 
   //Change position of axis
   focus.selectAll("#xaxis")
@@ -121,16 +127,16 @@ function cleanGraph(y_0, dates){
         .duration(500)
         .attr("transform", "translate(0,"+ y_0 + ")")
         .remove();
-  focus.selectAll("#yaxis").remove();
+  //focus.selectAll("#yaxis").remove();
   console.log("Cleaned graph : " + (focus.selectAll("rect")).size());
 }
 
 //Function that updates the graph when brushing
 function updateGraph(beginDate, endDate){
-    let initial_value = 100; //dollars
+  console.log("update graph for investamount : "+investamount);
     let amount_per_month = [];
     let best_crypto_month = [];
-
+    let old_dates = dates
     //Compute all dates
     let bDate = parseDate(beginDate);
     let eDate = parseDate(endDate);
@@ -142,58 +148,69 @@ function updateGraph(beginDate, endDate){
       let endPrice = day_prices[dates[i]];
 
       for(let j = 0; j < currenciesCount; j++){
-        let amount = initial_value + getPercentage(begPrice[j], endPrice[j]) * initial_value;
+        let amount = investamount + getPercentage(begPrice[j], endPrice[j]) * investamount;
         amount_per_crypto.push(amount);
       }
       //Get max and the corresponding currency
       max_value = d3.max(amount_per_crypto);
-      //console.log(amount_per_crypto);
       index_crypto = amount_per_crypto.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
       amount_per_month.push(max_value);
       best_crypto_month.push(currencies[index_crypto]);
     }
 
     console.log(amount_per_month);
+    d3.select("#aggrwin").text("You would have won a total amount of "+
+          Math.round(amount_per_month.reduce((a, b)=>a + b, 0)) + '$');
     let maxAmount = d3.max(amount_per_month);
 
     x.domain(dates);
     y.domain([0, maxAmount]);
-    cleanGraph(y(0), dates);
+    cleanGraph(y(0), old_dates);
 
     //Compute, place and draw every bar
      focus.selectAll(".bar")
           .data(amount_per_month)
           .enter().append("rect")
-          .attr("id", function(d, i) { return dates[i].split(" ")[0]; })
-          .attr("class", "bar bar--positive");
+          .attr("id", function(d, i) { return "bar--"+i;})
+          .attr("class", "bar");
 
-    for (let i = 0; i < dates.length; i++){
-      focus.select("#"+ dates[i].split(" ")[0])
-           .attr("class", "bar bar--positive")
+    for (let i = 0; i < dates.length - 1; i++){
+      focus.select("#bar--"+i)
            .attr("x", (x(dates[i]) + x(dates[i + 1])) / 2)
+           .attr("y", y(0))
+           .attr("height", 0)
            .attr("width", x.bandwidth())
            .transition()
            .delay(500)
            .duration(500)
-           .attr("y", function(d) { return y(amount_per_month[i]); })
-           .attr("height", function(d) { return Math.abs(y(amount_per_month[i]) - y(0)); });
+           .attr("y", y(amount_per_month[i]))
+           .attr("height", Math.abs(y(amount_per_month[i]) - y(0)));
+
+      focus.append("text")
+           .attr("class", "cryptoname")
+           .attr("id", "crypto--"+i)
+           .attr("x", (x(dates[i]) + x(dates[i + 1]))/2+ 5)
+           .attr("y",y(amount_per_month[i])- 10)
+           .transition()
+           .delay(1000)
+           .text(best_crypto_month[i] + ": " + Math.round(amount_per_month[i])+'$');
     }
 
     focus.append("g")//Append x axis of graph
             .attr("id", "xaxis")
             .attr("class", "axis axis--x")
-            .attr("transform", "translate(0,"+ y(0) + ")") //height/2 + margin.top
+            .attr("transform", "translate(0,"+ y(0) + ")")
             .attr("visibility", "hidden")
             .call(xAxis)
             .transition()
             .delay(500)
             .attr("visibility", "visible");
 
-    yAxis = yAxis.tickFormat(d => d + "$");
+    /*yAxis = yAxis.tickFormat(d => d + "$");
     focus.append("g") //Append y axis of graph
             .attr("id", "yaxis")
             .attr("class", "axis axis--y")
-            .call(yAxis);
+            .call(yAxis);*/
 }
 
 context.append("g") //Axis for brush
@@ -211,7 +228,7 @@ context.append("g") //Selecting area on brush
 context.append("text")
     .attr("id", "timeinterval")
     .attr("transform", "translate(0," + height2+ ")")
-    .text("Time interval" + firstDate + " to " + finalDate);
+    .text("Time interval " + firstDate + " to " + finalDate);
 
 context.append("text")
     .attr("id", "newcrypto")

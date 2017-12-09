@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
+  <link rel="icon" type="image/png" href="//static.epfl.ch/v0.26.1/favicon.png" />
   <title>Cryptodummies</title>
   <link rel="stylesheet" href="main.css">
   <script src="//d3js.org/d3.v4.min.js"></script>
@@ -8,12 +9,57 @@
 
 <body bgcolor = "#1C2826" >
   <h1>Cryptocurrencies in a new way</h1>
-  <p>Please select on the right the cryptocurrencies and then select the period on the time axis which is of your interest</p>
+  <p>Please select the period of time which interests you.
+    This period will be split in months and you will see which investment you have been the best for you.
+    We based ourselves on a 100$ investment.</p>
+
+  <div id="visualize">
+    <div id="io">
+      <p>Investment amount</p>
+      <div id="input">
+        <input type="text" width = "50px" id="investamount" value="100" />
+        <button width="50px" onclick="return changeinvestamount();">Go !</button>
+      </div>
+      <p id="aggrwin"> Here is the amount you won !</p>
+      <p id="listcrypto">
+          <img src="../logos/bitcoin.png" height = "20" />
+          Bitcoin (BTC) <br />
+          <img src="../logos/ethereum.png" height = "20" />
+          Ethereum (ETH)<br />
+          <img src="../logos/neo.png" height = "20" />
+          Neo (NEO)<br />
+          <img src="../logos/ripple.png" height = "20" />
+          Ripple (XRP)<br />
+          <img src="../logos/bitcoin-cash.png" height = "20" />
+          Bitcoin Cash (BCH)<br />
+          <img src="../logos/dash.png" height = "20" />
+          Dash (DASH)<br />
+          <img src="../logos/bitconnect.png" height = "20" />
+          Bitconnect (BCC)<br />
+          <img src="../logos/ethereum-classic.png" height = "20" />
+          Ethereum Classic (ETC)<br />
+          <img src="../logos/iota.png" height = "20" />
+          Iota (MIOTA)<br />
+          <img src="../logos/litecoin.png" height = "20" />
+          Litecoin (LTC)<br />
+          <img src="../logos/monero.png" height = "20" />
+          Monero (XMR)<br />
+          <img src="../logos/nem.png" height = "20" />
+          Nem (XEM)<br />
+          <img src="../logos/numeraire.png" height = "20" />
+          Numeraire (NMR)<br />
+          <img src="../logos/stratis.png" height = "20" />
+          Stratis (STRAT)<br />
+          <img src="../logos/waves.png" height = "20" />
+          Waves (WAVES)<br />
+      </p>
+    </div>
 
     <div id="graph">
       <svg width="960" height="500"></svg>
     </div>
   </div>
+
 
   <script type="text/javascript" src="invest.js"></script>
 </body>

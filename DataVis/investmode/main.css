@@ -1,4 +1,4 @@
-h1, p{
+h1, p, form {
   font-family: verdana, serif;
   color : #AEB7B3;
 }
@@ -13,17 +13,24 @@ button{
   font-family: verdana, serif;
   font-size: 11px;
   height: 30px;
+  width : 40px;
   text-align: left;
   color : #AEB7B3;
   border : 1px solid #AEB7B3;
+  display: inline-block;
 }
-
-button:hover, #BTC, input {
+button:active {
   color: #5B281C;
   background: #AEB7B3;
 }
 
-.bar--positive {
+input {
+  color: #5B281C;
+  background: #AEB7B3;
+  width :50%;
+}
+
+.bar{
   fill: #5C7457;
 }
 
@@ -39,6 +46,18 @@ button:hover, #BTC, input {
   shape-rendering: crispEdges;
 }
 
+
+#visualize {
+  display:flex;
+  flex-direction:row;
+  justify-content: space-around;
+}
+
+#io {
+  display:flex;
+  flex-direction:column;
+  width : 15%;
+}
 
 #graph{
   display:flex;
@@ -62,7 +81,7 @@ button:hover, #BTC, input {
   stroke : none;
 }
 
-#timeinterval, #newcrypto{
+#timeinterval, #newcrypto, .cryptoname, #aggrwin, #listcrypto{
   font-family: verdana, serif;
   fill : #AEB7B3;
   font-size: 10px;
