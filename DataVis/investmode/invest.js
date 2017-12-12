@@ -1,3 +1,5 @@
+//Indicator of initialization for the brushed function
+let init = true;
 //Default amount of investment for our computations
 let investamount = 100; //dollars
 //Function triggered by the button to change the value of investment
@@ -8,12 +10,12 @@ function changeinvestamount(){
   brushed();
 }
 
-//Function returning a percentage between 2 given prices
-function getPercentage(oldPrice, newPrice){
+//Function returning a ratio between 2 given prices
+function getRatio(oldPrice, newPrice){
   let percentage = 0
   //If 0, means the money didn't exist so we consider there is no augmentation
   if(oldPrice != 0.0) {
-    percentage = 100 * (newPrice - oldPrice) / oldPrice;
+    percentage = (newPrice - oldPrice) / oldPrice;
   }
   return percentage;
 }
@@ -37,7 +39,7 @@ function getRangeMonths(date1, date2){
 //Setting the svg environment with the margins
 //All items with a 2 in suffix are used for the time axis
 let svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 110, left: 50},
+    margin = {top: 80, right: 20, bottom: 110, left: 50},
     margin2 = {top: 430, right: 20, bottom: 10, left: 50},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom,
@@ -49,10 +51,10 @@ let x = d3.scaleBand().range([0, width]).padding(0.1),
     x2 = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]);
 
-let xAxis = d3.axisBottom(x),
-    xAxis2 = d3.axisBottom(x2),
-    yAxis = d3.axisLeft(y).tickSize(0)
-    .tickPadding(6);
+let xAxis = d3.axisBottom(x);
+let xAxis2 = d3.axisBottom(x2);
+let yAxis = d3.axisLeft(y).tickSize(0)
+              .tickPadding(6);
 
 let brush = d3.brushX() //Area to select a time interval
     .extent([[0, 0], [width, 40]])
@@ -113,30 +115,29 @@ d3.csv("../crypto_prices.csv", function(error, data) {
 });
 
 //Set time axis with dates of beginning and end of csv file
-x2.domain([parseDate("Apr 28 2013"), parseDate("Nov 07 2017")]);
+x2.domain([parseDate("May 01 2013"), parseDate("Nov 07 2017")]);
 
 //Function used to clean the bars and axis of the graph before drawing with the new data
 function cleanGraph(y_0, old_dates){
+  d3.selectAll(".cryptoname").remove();
   //Set all histogram bars to 0 using their id
-  for (let i = 0; i < old_dates.length -1 ; i++){
-    d3.select("#crypto--"+i).remove();
+  for (let i = 0; i < old_dates.length -1; i++){
     focus.selectAll("#bar--"+i)
-           .transition()//Nice transition to make the bars decrease to the origin
-           .duration(500)
-           .attr("y", y_0)
-           .attr("height", 0).remove();
+      .transition()//Nice transition to make the bars decrease to the origin
+      .duration(500)
+      .attr("height", 0)
+      .attr("y", y_0)
+      .remove();
   }
-  //Change position of axisso that it matches the appearance of next axis and remove
+  //Change position of axis so that it matches the appearance of next axis and remove
   focus.selectAll("#xaxis")
         .transition()
         .duration(500)
-        .attr("transform", "translate(0,"+ y_0 + ")")
         .remove();
-  //focus.selectAll("#yaxis").remove();
 }
 
 //Function that updates the graph when brushing
-function updateGraph(beginDate, endDate){
+async function updateGraph(beginDate, endDate){
     //Computing the new data to plot
     let amount_per_month = [];
     let best_crypto_month = [];
@@ -153,7 +154,11 @@ function updateGraph(beginDate, endDate){
       let begPrice = day_prices[dates[i - 1]];
       let endPrice = day_prices[dates[i]];
       for(let j = 0; j < currenciesCount; j++){
-        let amount = investamount + getPercentage(begPrice[j], endPrice[j]) * investamount;
+        let amount = investamount + getRatio(begPrice[j], endPrice[j]) * investamount;
+        if(amount == investamount){
+          //It means the currency didn't exist at the time -> getRatio yields 0, thus amount = inverstamount
+          amount = 0.0;
+        }
         amount_per_crypto.push(amount);
       }
       //Get max and the corresponding currency
@@ -163,14 +168,27 @@ function updateGraph(beginDate, endDate){
       amount_per_month.push(max_value);
       best_crypto_month.push(currencies[index_crypto]);
     }
+
     //Compute the aggregate value of all investments and display
     d3.select("#aggrwin").text("You would have won a total amount of "+
           Math.round(amount_per_month.reduce((a, b)=>a + b, 0)) + '$');
     //Update the axis and clean the graph with former dates
     let maxAmount = d3.max(amount_per_month);
+
+    cleanGraph(y(0), old_dates);
+    await sleep(500);
     x.domain(dates);
     y.domain([0, maxAmount]);
-    cleanGraph(y(0), old_dates);
+    //Depending on number of months to display, do or do not show all ticks on x axis
+    xAxis.tickValues(x.domain().filter(function(d,i){
+      if(dates.length <= 24 && dates.length > 12){
+        return !(i%2)
+      } else if (dates.length > 24) {
+        return !(i%4)
+      } else {
+        return true;
+      }
+    }));
 
     //Compute, place and draw every bar
      focus.selectAll(".bar")
@@ -183,11 +201,10 @@ function updateGraph(beginDate, endDate){
       //Make bar raise to the corresponding height
       focus.select("#bar--"+i)
            .attr("x", (x(dates[i]) + x(dates[i + 1])) / 2)
+           .attr("width", x.bandwidth())
            .attr("y", y(0))
            .attr("height", 0)
-           .attr("width", x.bandwidth())
            .transition()
-           .delay(500)
            .duration(500)
            .attr("y", y(amount_per_month[i]))
            .attr("height", Math.abs(y(amount_per_month[i]) - y(0)));
@@ -195,28 +212,30 @@ function updateGraph(beginDate, endDate){
       focus.append("text")
            .attr("class", "cryptoname")
            .attr("id", "crypto--"+i)
-           .attr("x", (x(dates[i]) + x(dates[i + 1]))/2+ 5)
-           .attr("y",y(amount_per_month[i])- 10)
+           .attr("dy", ".35em")
+           .attr("text-anchor", "middle")
+           .attr("transform", function(){
+             xText = (x(dates[i]) + x(dates[i+1]))/2 + x.bandwidth()/2;
+             yText = y(amount_per_month[i]) - 10;
+             if(dates.length > 12){
+               return "translate("+(xText)+","+(yText -25)+"), rotate(-90)";
+             } else {
+               return "translate("+(xText)+","+yText+")";
+             }
+           })
            .transition()
-           .delay(1000)
+           .delay(500)
            .text(best_crypto_month[i] + ": " + Math.round(amount_per_month[i])+'$');
     }
 
     focus.append("g")//Append x axis of graph
-            .attr("id", "xaxis")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0,"+ y(0) + ")")
-            .attr("visibility", "hidden")
-            .call(xAxis)
-            .transition()
-            .delay(500)
-            .attr("visibility", "visible");
-
-    /*yAxis = yAxis.tickFormat(d => d + "$");
-    focus.append("g") //Append y axis of graph
-            .attr("id", "yaxis")
-            .attr("class", "axis axis--y")
-            .call(yAxis);*/
+          .attr("id", "xaxis")
+          .attr("class", "axis axis--x")
+          .attr("transform", "translate(0,"+ y(0) + ")")
+          .attr("visibility", "hidden")
+          .call(xAxis)
+          .transition()
+          .attr("visibility", "visible");
 }
 
 context.append("g") //Axis for brush
@@ -267,8 +286,12 @@ function brushed() {
   finalDate = split_end[1] + " " + split_end[2] + " " + split_end[3];
   //Change text of display with new time interval
   d3.select("#timeinterval").text("Time interval " + firstDate + " to "+ finalDate);
-  //Draw the new bars
-  updateGraph(firstDate, finalDate);
+  //Avoid calling updateGraph on initialization of brush area
+  if(init == false){
+    //Draw the new bars
+    updateGraph(firstDate, finalDate);
+  }
+  init = false;
   //Change text of display with new unavailable cryptocurrencies
   unavailableCryptocurrencies(split_begin[3]);
 }
@@ -276,4 +299,8 @@ function brushed() {
 function type(d) { //Function that parses the data on read
   d.value = +d.value;
   return d;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
