@@ -12,6 +12,8 @@ In the data folder, you will find the original data on which we have worked.
 Source : https://www.kaggle.com/sudalairajkumar/cryptocurrencypricehistory <br>
 
 Our preprocessing and exploratory analysis can be found on the Jupyter Notebook crypto_cleaning.ipynb, available in this repository.
+To visualize the notebook : http://nbviewer.jupyter.org/github/emlg/emlg.github.io/blob/master/DataVis/crypto_cleaning.ipynb <br>
+
 The file resulting from this preprocessing is crypto_prices.csv, available in this repository.
-The overview of the exploratory analysis can be found in the process book.
+The overview of the exploratory analysis can be found in the process book. <br>
 The last element is the code : you will find the code of both modes in their corresponding folders. Each of them contains a Javascript, a HTML and a CSS files. Both modes requires the "crypto_prices.csv" file and the folder named "logos".
